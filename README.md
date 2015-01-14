@@ -1,4 +1,4 @@
-# angular-component
+# angular-seed
 Seed angular project
 
 Setup:
