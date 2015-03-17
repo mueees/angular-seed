@@ -68,7 +68,8 @@ module.exports = {
         },
 
         stylus: {
-            default: 'app/stylus/default.styl'
+            default: 'app/stylus/default.styl',
+            dark: 'app/stylus/dark.styl'
         },
 
         html: 'app/index.html'
@@ -91,6 +92,9 @@ module.exports = {
         css: [
             'app/vendor/bootstrap/dist/css/bootstrap.css',
             'app/vendor/angular-busy/angular-busy.css'
+        ],
+        fonts: [
+            'app/vendor/bootstrap/fonts/*'
         ],
         assets: []
     }

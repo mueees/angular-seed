@@ -26,8 +26,6 @@ module.exports = function ( grunt ) {
             for (var loop = 0; loop < names.length; loop++) {
                 newNames.push(changePrefix(names[loop], oldPrefix, newPrefix));
             }
-
-
         }
 
         return newNames;
@@ -91,6 +89,8 @@ module.exports = function ( grunt ) {
                     }
                 ]
             },
+
+            //vendor
             vendor_js: {
                 files: [
                     {
@@ -106,6 +106,17 @@ module.exports = function ( grunt ) {
                     {
                         src: [ '<%= vendor_files.css %>' ],
                         dest: '<%= build_dir %>/app/assets/css/vendor',
+                        cwd: '.',
+                        expand: true,
+                        flatten: true
+                    }
+                ]
+            },
+            vendor_fonts: {
+                files: [
+                    {
+                        src: [ '<%= vendor_files.fonts %>' ],
+                        dest: '<%= build_dir %>/app/assets/fonts',
                         cwd: '.',
                         expand: true,
                         flatten: true
@@ -129,7 +140,8 @@ module.exports = function ( grunt ) {
                     compress: false
                 },
                 files: {
-                    'app/assets/css/default-<%= pkg.name %>-<%= pkg.version %>.css': '<%= app_files.stylus.default %>'
+                    '<%= build_dir %>/app/assets/css/default-<%= pkg.name %>-<%= pkg.version %>.css': '<%= app_files.stylus.default %>',
+                    '<%= build_dir %>/app/assets/css/dark-<%= pkg.name %>-<%= pkg.version %>.css': '<%= app_files.stylus.dark %>'
                 }
             },
             compile: {
@@ -144,6 +156,9 @@ module.exports = function ( grunt ) {
         clean: {
             build: [
                 '<%= build_dir %>'
+            ],
+            assets_build: [
+                '<%= build_dir %>/app/assets'
             ],
             compile: '<%= compile_dir %>',
             compile_script_temp: '<%= compile_dir_scripts_temp %>'
@@ -299,13 +314,13 @@ module.exports = function ( grunt ) {
             }
         },
         watch: {
-            jssrc: {
+            app_js: {
                 files: [
                     '<%= app_files.js.app %>'
                 ],
                 tasks: [ 'jshint:src', 'copy:app_js' ]
             },
-            corejssrc: {
+            core_js: {
                 files: [
                     '<%= app_files.js.core %>'
                 ],
@@ -316,6 +331,14 @@ module.exports = function ( grunt ) {
                     '<%= app_files.js.jsunit %>'
                 ],
                 tasks: [ 'karma']
+            },
+            assets: {
+                files: ['app/assets/**'],
+                tasks: ['clean:assets_build', 'copy:app_assets', 'copy:vendor_css', 'copy:vendor_fonts']
+            },
+            stylus: {
+                files: [ 'app/**/*.styl' ],
+                tasks: [ 'stylus:dev' ]
             },
             gruntfile: {
                 files: 'Gruntfile.js',
@@ -333,10 +356,6 @@ module.exports = function ( grunt ) {
                     '<%= app_files.js.templates %>'
                 ],
                 tasks: [ 'html2js:app' ]
-            },
-            stylus: {
-                files: [ 'app/**/*.styl' ],
-                tasks: [ 'stylus:dev', 'copy:app_assets' ]
             }
         },
         uglify: {
@@ -352,15 +371,22 @@ module.exports = function ( grunt ) {
     grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
 
     grunt.registerTask("development", [
-        'karma',
+        /*'karma',*/
         'clean:build',
-        'stylus:dev',
-        'jsvalidate',
-         'jshint',
-        'copy:app_assets',
+        'clean:assets_build',
+
         'copy:app_js',
-        'copy:vendor_js',
+        'copy:app_assets',
+        'stylus:dev',
+
+        /*copy vendor files to assets*/
         'copy:vendor_css',
+        'copy:vendor_fonts',
+        'copy:vendor_js',
+
+        'jsvalidate',
+        'jshint',
+
         'html2js:app',
         'htmlbuild:dev'
     ]);
@@ -371,7 +397,7 @@ module.exports = function ( grunt ) {
         'jsvalidate',
         'jshint',
         'stylus:compile',
-         'copy:compile_assets',
+        'copy:compile_assets',
         'html2js:compile',
         'concat:compile_vendor',
         'concat:compile_core',
