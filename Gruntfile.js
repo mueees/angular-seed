@@ -14,6 +14,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-ngmin');
     grunt.loadNpmTasks('grunt-html2js');
+    grunt.loadNpmTasks('grunt-svg-sprite');
 
     // Uses to change the root name oldPrefix of a long folder name to newPrefix
     var changeRootFolder = function (names, oldPrefix, newPrefix) {
@@ -334,7 +335,7 @@ module.exports = function ( grunt ) {
             },
             assets: {
                 files: ['app/assets/**'],
-                tasks: ['clean:assets_build', 'copy:app_assets', 'copy:vendor_css', 'copy:vendor_fonts']
+                tasks: ['clean:assets_build', 'copy:app_assets', 'copy:vendor_css', 'copy:vendor_fonts', 'svg_sprite:complex', 'stylus:dev']
             },
             stylus: {
                 files: [ 'app/**/*.styl' ],
@@ -365,6 +366,39 @@ module.exports = function ( grunt ) {
                     '<%= concat.compile_js.dest %>': '<%= concat.compile_js.dest %>'
                 }
             }
+        },
+        svg_sprite                  : {
+            complex: {
+
+                // Target basics
+                expand                  : true,
+                cwd                     : '.',
+                src                     : ['app/source/svg/*.svg'],
+                dest                    : '<%= build_dir %>/app/assets/svg',
+
+                // Target options
+                options                 : {
+                    shape               : {
+                        dimension       : {         // Set maximum dimensions
+                            maxWidth    : 32,
+                            maxHeight   : 32
+                        },
+                        spacing         : {         // Add padding
+                            padding     : 10
+                        },
+                        dest            : 'intermediate-svg'    // Keep the intermediate files
+                    },
+                    mode                : {
+                        view            : {         // Activate the «view» mode
+                            bust        : false,
+                            render      : {
+                                css    : true      // Activate Sass output (with default options)
+                            }
+                        },
+                        symbol          : true      // Activate the «symbol» mode
+                    }
+                }
+            }
         }
     };
 
@@ -377,6 +411,7 @@ module.exports = function ( grunt ) {
 
         'copy:app_js',
         'copy:app_assets',
+        'svg_sprite:complex',
         'stylus:dev',
 
         /*copy vendor files to assets*/
