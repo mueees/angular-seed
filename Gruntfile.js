@@ -1,4 +1,4 @@
-module.exports = function ( grunt ) {
+module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -15,6 +15,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks('grunt-ngmin');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-svg-sprite');
+    grunt.loadNpmTasks('grunt-spritesmith');
 
     // Uses to change the root name oldPrefix of a long folder name to newPrefix
     var changeRootFolder = function (names, oldPrefix, newPrefix) {
@@ -44,7 +45,7 @@ module.exports = function ( grunt ) {
         return name;
     };
 
-    var userConfig = require( './build.config.js' );
+    var userConfig = require('./build.config.js');
 
     var taskConfig = {
         pkg: grunt.file.readJSON("package.json"),
@@ -54,7 +55,7 @@ module.exports = function ( grunt ) {
                     base: '.',
                     module: 'templates-app'
                 },
-                src: [ '<%= app_files.js.templates %>' ],
+                src: ['<%= app_files.js.templates %>'],
                 dest: '<%= build_dir %>/app/scripts/app/seed.templates.js'
             },
             compile: {
@@ -62,7 +63,7 @@ module.exports = function ( grunt ) {
                     base: '.',
                     module: 'templates-app'
                 },
-                src: [ '<%= app_files.js.templates %>' ],
+                src: ['<%= app_files.js.templates %>'],
                 dest: '<%= compile_dir %>/scripts/temp/seed.templates.js'
             }
         },
@@ -70,7 +71,7 @@ module.exports = function ( grunt ) {
             app_assets: {
                 files: [
                     {
-                        src: [ '**' ],
+                        src: ['**'],
                         dest: '<%= build_dir %>/app/assets',
                         cwd: 'app/assets',
                         expand: true,
@@ -95,7 +96,7 @@ module.exports = function ( grunt ) {
             vendor_js: {
                 files: [
                     {
-                        src: [ '<%= vendor_files.js %>' ],
+                        src: ['<%= vendor_files.js %>'],
                         dest: '<%= build_dir %>/',
                         cwd: '.',
                         expand: true
@@ -105,7 +106,7 @@ module.exports = function ( grunt ) {
             vendor_css: {
                 files: [
                     {
-                        src: [ '<%= vendor_files.css %>' ],
+                        src: ['<%= vendor_files.css %>'],
                         dest: '<%= build_dir %>/app/assets/css/vendor',
                         cwd: '.',
                         expand: true,
@@ -116,7 +117,7 @@ module.exports = function ( grunt ) {
             vendor_fonts: {
                 files: [
                     {
-                        src: [ '<%= vendor_files.fonts %>' ],
+                        src: ['<%= vendor_files.fonts %>'],
                         dest: '<%= build_dir %>/app/assets/fonts',
                         cwd: '.',
                         expand: true,
@@ -127,7 +128,7 @@ module.exports = function ( grunt ) {
             compile_assets: {
                 files: [
                     {
-                        src: [ '**' ],
+                        src: ['**'],
                         dest: '<%= compile_dir %>/assets',
                         cwd: '<%= build_dir %>/app/assets',
                         expand: true
@@ -209,13 +210,13 @@ module.exports = function ( grunt ) {
         concat: {
             //javascript files
             compile_vendor: {
-                src:[
+                src: [
                     '<%= vendor_files.js %>'
                 ],
                 dest: '<%= compile_dir %>/scripts/temp/vendor_templates.js'
             },
             compile_pages: {
-                src:[
+                src: [
                     'module.prefix',
                     '<%= app_files.js.pages %>',
                     'module.suffix'
@@ -223,7 +224,7 @@ module.exports = function ( grunt ) {
                 dest: '<%= compile_dir %>/scripts/temp/main.js'
             },
             compile_core: {
-                src:[
+                src: [
                     'module.prefix',
                     '<%= app_files.js.core %>',
                     'module.suffix'
@@ -319,44 +320,44 @@ module.exports = function ( grunt ) {
                 files: [
                     '<%= app_files.js.app %>'
                 ],
-                tasks: [ 'jshint:src', 'copy:app_js' ]
+                tasks: ['jshint:src', 'copy:app_js']
             },
             core_js: {
                 files: [
                     '<%= app_files.js.core %>'
                 ],
-                tasks: [ 'jshint:src', 'copy:app_js' ]
+                tasks: ['jshint:src', 'copy:app_js']
             },
             jsunit: {
                 files: [
                     '<%= app_files.js.jsunit %>'
                 ],
-                tasks: [ 'karma']
+                tasks: ['karma']
             },
             assets: {
                 files: ['app/assets/**'],
-                tasks: ['clean:assets_build', 'copy:app_assets', 'copy:vendor_css', 'copy:vendor_fonts', 'svg_sprite:complex', 'stylus:dev']
+                tasks: ['clean:assets_build', 'copy:app_assets', 'copy:vendor_css', 'copy:vendor_fonts', 'svg_sprite:dev', 'sprite:dev', 'stylus:dev', 'htmlbuild:dev']
             },
             stylus: {
-                files: [ 'app/**/*.styl' ],
-                tasks: [ 'stylus:dev' ]
+                files: ['app/**/*.styl'],
+                tasks: ['stylus:dev']
             },
             gruntfile: {
                 files: 'Gruntfile.js',
-                tasks: [ 'jshint:gruntfile' ],
+                tasks: ['jshint:gruntfile'],
                 options: {
                     livereload: false
                 }
             },
             html: {
-                files: [ '<%= app_files.html %>' ],
-                tasks: [ '' ]
+                files: ['<%= app_files.html %>'],
+                tasks: ['htmlbuild:dev']
             },
             tpls: {
                 files: [
                     '<%= app_files.js.templates %>'
                 ],
-                tasks: [ 'html2js:app' ]
+                tasks: ['html2js:app']
             }
         },
         uglify: {
@@ -367,42 +368,51 @@ module.exports = function ( grunt ) {
                 }
             }
         },
-        svg_sprite                  : {
-            complex: {
-
-                // Target basics
-                expand                  : true,
-                cwd                     : '.',
-                src                     : ['app/source/svg/*.svg'],
-                dest                    : '<%= build_dir %>/app/assets/svg',
-
-                // Target options
-                options                 : {
-                    shape               : {
-                        dimension       : {         // Set maximum dimensions
-                            maxWidth    : 32,
-                            maxHeight   : 32
-                        },
-                        spacing         : {         // Add padding
-                            padding     : 10
-                        },
-                        dest            : 'intermediate-svg'    // Keep the intermediate files
+        svg_sprite: {
+            dev: {
+                expand: true,
+                cwd: '.',
+                src: ['app/source/svg/*.svg'],
+                dest: '<%= build_dir %>/app/assets/svg',
+                options: {
+                    mode: {
+                        symbol: {
+                            sprite: 'svg-sprite.svg',
+                            render: {
+                                css: false
+                            },
+                            bust: false,
+                            example: true
+                        }
                     },
-                    mode                : {
-                        view            : {         // Activate the «view» mode
-                            bust        : false,
-                            render      : {
-                                css    : true      // Activate Sass output (with default options)
+                    svg: {
+                        xmlDeclaration: false,
+                        dimensionAttributes: false
+                    },
+                    shape: {
+                        id: {
+                            generator: function (path) {
+                                var array = path.split('\\');
+                                var fileName = array[array.length - 1];
+                                var fileNameArray = fileName.split('.');
+                                return 'svg-icon-' + fileNameArray[0];
                             }
                         },
-                        symbol          : true      // Activate the «symbol» mode
+                        dest: 'items'
                     }
                 }
+            }
+        },
+        sprite:{
+            dev: {
+                src: 'app/source/icon/*.png',
+                dest: '<%= build_dir %>/app/assets/img/sprite.png',
+                destCss: '<%= build_dir %>/app/assets/css/sprite.css'
             }
         }
     };
 
-    grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
+    grunt.initConfig(grunt.util._.extend(taskConfig, userConfig));
 
     grunt.registerTask("development", [
         /*'karma',*/
@@ -411,7 +421,8 @@ module.exports = function ( grunt ) {
 
         'copy:app_js',
         'copy:app_assets',
-        'svg_sprite:complex',
+        'svg_sprite:dev',
+        'sprite:dev',
         'stylus:dev',
 
         /*copy vendor files to assets*/
@@ -426,7 +437,7 @@ module.exports = function ( grunt ) {
         'htmlbuild:dev'
     ]);
 
-    grunt.registerTask( 'compile', [
+    grunt.registerTask('compile', [
         'karma',
         'clean:compile',
         'jsvalidate',
@@ -448,7 +459,6 @@ module.exports = function ( grunt ) {
         grunt.task.run('development');
         grunt.task.run('watch');
     });
-
 
 
 };
