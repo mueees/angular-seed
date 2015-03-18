@@ -77,11 +77,11 @@ module.exports = {
 
     vendor_files: {
         js: [
-            'app/vendor/angular/angular.js',
-            'app/vendor/underscore/underscore-min.js',
-            'app/vendor/restangular/dist/restangular.min.js',
-            'app/vendor/angular-growl/build/angular-growl.js',
-            'app/vendor/angular-mocks/angular-mocks.js',
+            'app/vendor/angular-1.3.15/angular.js',
+            'app/vendor/underscore-1.8.2/underscore.js',
+            'app/vendor/restangular-1.4.0/restangular.js',
+            'app/vendor/angular-growl-0.4.0/angular-growl.js',
+            'app/vendor/angular-mocks-1.2.28/angular-mocks.js',
             'app/vendor/angular-sanitize/angular-sanitize.js',
             'app/vendor/angular-touch/angular-touch.min.js',
             'app/vendor/angular-ui-router/release/angular-ui-router.min.js',
