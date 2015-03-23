@@ -328,6 +328,12 @@ module.exports = function (grunt) {
                 ],
                 tasks: ['jshint:src', 'copy:app_js']
             },
+            core_pages: {
+                files: [
+                    '<%= app_files.js.pages %>'
+                ],
+                tasks: ['jshint:src', 'copy:app_js']
+            },
             jsunit: {
                 files: [
                     '<%= app_files.js.jsunit %>'
